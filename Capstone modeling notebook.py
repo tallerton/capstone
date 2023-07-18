@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[2]:
+# In[39]:
 
 
 import networkx as nx
@@ -14,28 +14,17 @@ import operator
 
 import matplotlib as plot
 import matplotlib.pyplot as plt
-
+import seaborn as sn
 #import seaborn as sns
 
 
-# In[3]:
-
-
-import pandas as pd
-import seaborn as sn
-import matplotlib.pyplot as plt
+# In[ ]:
 
 
 
 
-np.random.seed(0)
-sn.set()
-uniform_data = np.random.rand(10, 12)
-ax = sn.heatmap(uniform_data, vmin=0, vmax=1)
-plt.show()
 
-
-# In[4]:
+# In[40]:
 
 
 import pandas as pd
@@ -49,7 +38,41 @@ df_raw = pd.read_csv ('resources/rawdata_new.csv',index_col=False,header=0)
 nodes_in_name1=[]
 nodes_with_edges=[]
 nodes_with_edges = df_edges['sender_id'].unique().tolist()
-
+#calculate measured mitigation
+farmtype = df['farmtype'].unique().tolist()
+print(farmtype)
+df['mitigation_measure']=0
+for i in df.index:
+    mm_total=0
+    if df['legum'][i] == 1 :
+        mm_total+=1
+    if df['conc'][i] == 1 :
+        mm_total+=1
+    if df['add'][i] == 1 :
+        mm_total+=1
+    if df['lact'][i] == 1 :
+        mm_total+=1
+    if df['breed'][i] == 1 :
+        mm_total+=1
+    if df['covman'][i] == 1 :
+        mm_total+=1
+    if df['comp'][i] == 1 :
+        mm_total+=1
+    if df['drag'][i] == 1 :
+        mm_total+=1
+    if df['cov'][i] == 1 :
+        mm_total+=1
+    if df['plough'][i] == 1 :
+        mm_total+=1
+    if df['solar'][i] == 1 :
+        mm_total+=1
+    if df['biog'][i] == 1 :
+        mm_total+=1
+    if df['ecodr'][i] == 1 :
+        mm_total+=1
+    df['mitigation_measure'][i] = mm_total/13
+print(df['mitigation_measure'] )
+print("mean ",df['mitigation_measure'].mean())
 df_raw = df_raw[~df_raw['id'].isin(nodes_with_edges)]
 for i in df.index:
     if df['net_name1_neigh'][i] == 1 or df['net_name1_work'][i] == 1 or df['net_name1_frien'][i] == 1 or df['net_name1_fam'][i] == 1 or df['net_name1_part'][i] == 1 or df['net_name1_club'][i] == 1  or df['net_name1_vet'][i] == 1 or df['net_name1_ext'][i] == 1 or df['net_name1_oth'][i] == 1 :
@@ -70,7 +93,7 @@ nx.draw_random(G,with_labels=True)
 plt.show()
 
 
-# In[5]:
+# In[55]:
 
 
 # plotting the heatmap
@@ -80,11 +103,11 @@ linecolor = "blue"
 sn.heatmap(data=df[['reducpercent','co22015', 'co22018']],
                 linewidths=linewidths,
                 linecolor=linecolor, annot=False)
-plt.gcf().set_size_inches(15, 10)
-plt.show()
+#plt.gcf().set_size_inches(15, 10)
+#plt.show()
 
 
-# In[6]:
+# In[42]:
 
 
 from decimal import *
@@ -96,16 +119,18 @@ centrality_matrix = sorted(deg_dict.items(), key=lambda item:item[1],reverse=Tru
 maximum= centrality_matrix[0]
 node_max_degree = maximum[0]
 val_deg = maximum[1]
-print('The node which has the largest degree centrality value is node #',node_max_degree,)
-print('And the centrality value is',val_deg)
+
+#print('The node which has the largest degree centrality value is node #',node_max_degree,)
+#print('And the centrality value is',val_deg)
+
 #calculate betweenness
 bc = nx.betweenness_centrality(G)
 bc_dict = sorted(bc.items(), key=lambda item:item[1],reverse=True)#[-5:])
-print('centrality: ',centrality_matrix)
-print('betweenness: ' ,bc_dict)
+#print('centrality: ',centrality_matrix)
+#print('betweenness: ' ,bc_dict)
 
 
-# In[11]:
+# In[43]:
 
 
 x=[]
@@ -130,7 +155,7 @@ for node in x_nodes:
 plt.figure(figsize=(16,9))
 line=plt.bar(x_nodes,y, width=1)
 plt.xlabel('Individual Node Number')
-plt.ylabel('Aggregated CCMM Score')
+plt.ylabel('Aggregated Perceived CCMM Score')
 
 for i in range(len(x)):
     plt.annotate(str(x_nodes[i]), xy=(x_nodes[i],y[i]), ha='center', va='bottom')
@@ -139,7 +164,34 @@ plt.title('Farm Nodes and CCMM Scores', fontsize=16)
 plt.show()
 
 
-# In[ ]:
+# In[44]:
+
+
+x=[]
+x_nodes=[]
+y=[]
+for entry in centrality_matrix:
+    if entry[0] in nodes_with_edges:
+        x.append(entry[1])
+        x_nodes.append(entry[0])
+
+for node in x_nodes:
+    if node in nodes_with_edges:
+        y.append(df[df['ego_id']==node]['mitigation_measure'].values[0])
+
+plt.figure(figsize=(16,9))
+line=plt.bar(x_nodes,y, width=1)
+plt.xlabel('Individual Node Number')
+plt.ylabel('Mitigation measure')
+
+for i in range(len(x)):
+    plt.annotate(str(x_nodes[i]), xy=(x_nodes[i],y[i]), ha='center', va='bottom')
+
+plt.title('Farm Nodes and Mitigation Measures', fontsize=16)
+plt.show()
+
+
+# In[45]:
 
 
 #maybe plot the bars in order, from highest centrality to last
@@ -168,7 +220,7 @@ for i in range(len(x)):
 plt.show()
 
 
-# In[ ]:
+# In[46]:
 
 
 max_5_cc = []  # a list of 5 nodes with the largest closeness centrality values
@@ -182,7 +234,7 @@ print('The 5 nodes with the largest closeness centrality values are', max_5_cc)
 print('The 5 nodes with the smallest closeness centrality values are', min_5_cc)
 
 
-# In[ ]:
+# In[47]:
 
 
 max_5_bc = []  # a list of 5 nodes with the largest betweenness centrality values
@@ -196,7 +248,7 @@ min_5_bc = [x[0] for x in bc_dict[-5:]] # use list comprehension to get bottom 5
 print(max_5_bc, min_5_bc)
 
 
-# In[ ]:
+# In[48]:
 
 
 graph_trans = None      # graph transitivity. This should be a float. 
@@ -214,7 +266,7 @@ print(graph_trans,avg_clustering)
 
 
 
-# In[ ]:
+# In[49]:
 
 
 x=[]
@@ -251,7 +303,7 @@ for i in range(len(x_nodes)):
 plt.show()
 
 
-# In[ ]:
+# In[50]:
 
 
 import matplotlib.pyplot as plt
@@ -278,7 +330,7 @@ for i in range(len(x)):
 plt.show()
 
 
-# In[ ]:
+# In[51]:
 
 
 ['mainprodcution','reducpercent']
@@ -301,7 +353,7 @@ plt.yticks(fontsize=14)
 plt.show()
 
 
-# In[ ]:
+# In[52]:
 
 
 df = pd.read_csv ('resources/Atts_agroconcept_survey.csv',index_col=False,header=0)
@@ -320,7 +372,7 @@ plt.yticks(fontsize=14)
 plt.show()
 
 
-# In[ ]:
+# In[53]:
 
 
 #get the nodes(farms) with more than 5 networks
