@@ -11,7 +11,7 @@ Drawing on social and egocentric network analysis, we engineered ego network fea
 We adopted statistical approaches, such as ordinary least squares regression with percentage of relevant measures adopted as the dependent variable, to better understand any network effects.
 
 Within this Github repository, you will find various python notebooks which are titled for the individual techniques and use cases they fulfill. Along with these are the raw data files, which are 
-the csv files.
+the csv files. These raw data files should be downloaded before.
 
 
 
