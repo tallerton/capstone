@@ -11,3 +11,5 @@ Figure 2 can be produced by running 'correlation heatmap.ipynb'
 
 Figure 3 can be produced by running 'network diagram.ipynb'
 
+The data which supports this investigation are freely available from ETH Zurich and can be found at https://doi.org/10.3929/ethz-b-000458053
+
