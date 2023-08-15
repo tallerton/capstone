@@ -1,14 +1,16 @@
 import networkx as nx
 import pandas as pd
 import numpy as np
-
 import urllib
 import json
 import operator
-
 import matplotlib as plot
 import matplotlib.pyplot as plt
-import seaborn as sn
+import seaborn as sns
 import altair as alt
-
 from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.impute import SimpleImputer
+from sklearn.manifold import TSNE
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import FactorAnalysis
+import statsmodels.formula.api as smf
